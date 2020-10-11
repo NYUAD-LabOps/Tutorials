@@ -260,6 +260,12 @@ Synergy Configuration
     SSP MCU Information Symbol Name: g_fmi_data
     Part Number Mask: 0xFE00
     
+  Module "USBX Device Class CDC-ACM"
+  Module "USBX Device Configuration"
+    Composite Device: Disable
+    
+  Module "USBX on ux"
+  Module "USBX Interface Configuration CDC-ACM"
   HAL
     Instance "g_elc ELC Driver on r_elc"
       Name [Fixed]: g_elc
@@ -281,4 +287,57 @@ Synergy Configuration
     Auto start: Enabled
     Time slicing interval (ticks): 1
     
+    Instance "g_ux_device_class_cdc_acm0 USBX Device Class CDC-ACM"
+      Name: g_ux_device_class_cdc_acm0
+      USBX CDC-ACM instance_activate Function Callback: ux_cdc_device0_instance_activate
+      USBX CDC-ACM instance_deactivate Function Callback: ux_cdc_device0_instance_deactivate
+      Name of generated initialization function: ux_device_class_cdc_acm_init0
+      Auto Initialization: Enable
+      
+      Instance "USBX Device Configuration"
+        Vendor ID: 0x045B
+        Product ID: 0x0000
+        Device Release Number: 0x0000
+        Index of Manufacturer String Descriptor: 0x00
+        Index of Product String Descriptor: 0x00
+        Index of Serial Number String Descriptor: 0x00
+        Class Code: Communications(CDC)
+        Index of String Descriptor describing this configuration: 0x00
+        Size of USB Descriptor in bytes for this configuration (Modify this value only for Vendor-specific Class, otherwise set zero): 0x00
+        Number of Interfaces (Modify this value only for Vendor-specific Class, otherwise set zero): 0x00
+        Self-Powered: Enable
+        Remote Wakeup: Disable
+        Maximum Power Consumption (in 2mA units): 50
+        Supported Language Code: 0x0409
+        Name of USBX String Framework: NULL
+        Total index number of USB String Descriptors in USBX String Framework: 0
+        Name of USBX Language Framework: NULL
+        Number of Languages to support (US English is applied if zero is set): 0
+        Name of generated initialization function: ux_device_init0
+        Auto Initialization: Enable
+        
+        Instance "USBX on ux"
+          USBX Pool Memory Name: g_ux_pool_memory
+          USBX Pool Memory Size: 65536
+          User Callback for Host Event Notification(Only valid for USB Host): NULL
+          User Callback for Device Event Notification(Only valid for USB Device): NULL
+          Name of generated initialization function: ux_common_init0
+          Auto Initialization: Enable
+          
+      Instance "g_usb_interface_desc_cdcacm_0 USBX Interface Configuration CDC-ACM"
+        Name: g_usb_interface_desc_cdcacm_0
+        Interface Number of Communications Class interface: 0x00
+        Interrupt Transfer endpoint to use for Communications Class: Endpoint 3
+        Polling period for Interrupt Endpoint (in mS/125us units for FS/HS): 0x0F
+        Interface Number of Data Class interface: 0x01
+        Bulk In Transfer endpoint to use for Data Class: Endpoint 1
+        Bulk Out Transfer endpoint to use for Data Class: Endpoint 2
+        Index of String Descriptor Describing Communications Class interface (Interface Descriptor:iInterface).: 0x00
+        Index of String Descriptor Describing Data Class interface (Interface Descriptor:iInterface).: 0x00
+        
+    Object "g_cdc_activate_semaphore Semaphore"
+      Name: g_cdc_activate_semaphore
+      Symbol: g_cdc_activate_semaphore
+      Initial count: 0
+      
   Messaging

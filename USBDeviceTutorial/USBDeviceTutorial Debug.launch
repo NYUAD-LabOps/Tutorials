@@ -2,7 +2,14 @@
 <launchConfiguration type="com.renesas.cdt.launch.dsf.gdbremote.launchConfigurationType">
 <stringAttribute key="com.renesas.cdt.core.initCommands" value=""/>
 <stringAttribute key="com.renesas.cdt.core.ipAddress" value="localhost"/>
+<stringAttribute key="com.renesas.cdt.core.jtagDevice" value="J-Link ARM"/>
 <stringAttribute key="com.renesas.cdt.core.jtagDeviceId" value="com.renesas.hardwaredebug.rz.jlink"/>
+<listAttribute key="com.renesas.cdt.core.listGDBExe">
+<listEntry value="arm-none-eabi-gdb"/>
+</listAttribute>
+<listAttribute key="com.renesas.cdt.core.listGDBLaunchName">
+<listEntry value="main"/>
+</listAttribute>
 <stringAttribute key="com.renesas.cdt.core.optionInitCommands" value=""/>
 <intAttribute key="com.renesas.cdt.core.portNumber" value="61234"/>
 <stringAttribute key="com.renesas.cdt.core.runCommands" value=""/>
