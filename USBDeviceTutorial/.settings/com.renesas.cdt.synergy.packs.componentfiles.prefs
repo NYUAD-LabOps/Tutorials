@@ -1,0 +1,7 @@
+Renesas\#\#BSP\#\#s7g2\#\#device\#\#\#\#1.7.5/all=synergy/ssp/src/bsp/cmsis/Device/RENESAS/S7G2/Include/system_S7G2.h
+Renesas\#\#BSP\#\#s7g2\#\#device\#\#\#\#1.7.5/libraries=
+Renesas\#\#BSP\#\#s7g2\#\#device\#\#R7FS7G27H3A01CFC\#\#1.7.5/all=synergy/ssp/src/bsp/mcu/s7g2/bsp_fmi_R7FS7G27H3A01CFC.c
+Renesas\#\#BSP\#\#s7g2\#\#device\#\#R7FS7G27H3A01CFC\#\#1.7.5/libraries=
+Renesas\#\#BSP\#\#s7g2\#\#ssp\#\#\#\#1.7.5/all=synergy/ssp/src/bsp/cmsis/Device/RENESAS/S7G2/Include/S7G2.h|synergy/ssp/src/bsp/cmsis/Device/RENESAS/S7G2/Include/system_S7G2.h|synergy/ssp/src/bsp/cmsis/Device/RENESAS/S7G2/Source/startup_S7G2.c|synergy/ssp/src/bsp/cmsis/Device/RENESAS/S7G2/Source/system_S7G2.c|synergy/ssp/src/bsp/mcu/s7g2/bsp_analog.h|synergy/ssp/src/bsp/mcu/s7g2/bsp_cache.c|synergy/ssp/src/bsp/mcu/s7g2/bsp_cache.h|synergy/ssp/src/bsp/mcu/s7g2/bsp_clocks.c|synergy/ssp/src/bsp/mcu/s7g2/bsp_elc.h|synergy/ssp/src/bsp/mcu/s7g2/bsp_feature.c|synergy/ssp/src/bsp/mcu/s7g2/bsp_group_irq.c|synergy/ssp/src/bsp/mcu/s7g2/bsp_hw_locks.c|synergy/ssp/src/bsp/mcu/s7g2/bsp_mcu_info.h|synergy/ssp/src/bsp/mcu/s7g2/bsp_module_stop.c|synergy/ssp/src/bsp/mcu/s7g2/bsp_rom_registers.c
+Renesas\#\#BSP\#\#s7g2\#\#ssp\#\#\#\#1.7.5/libraries=
+eclipse.preferences.version=1
