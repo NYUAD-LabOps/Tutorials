@@ -150,21 +150,16 @@ void USB_entry(void)
                 }
             }
 
-            ///Wait for default motor data to be ready
-            while (machineGlobalsBlock->motorsInit == 0)
-            {
-                tx_thread_sleep (50);
-            }
-            // Try to open the file, 'Helix.ini'.
-            fx_return = fx_file_open(machineGlobalsBlock->p_media, &ini_file, "Helix.ini",
+                        // Try to open the file, 'init.ini'.
+            fx_return = fx_file_open(machineGlobalsBlock->p_media, &ini_file, "init.ini",
                                      FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
 
             if (fx_return != FX_SUCCESS)
             {
                 if (DEBUGGER)
-                    printf ("\nHelix.ini not found. Creating...");
-                //The 'Helix.ini' file is not found, so create a new file
-                fx_return = fx_file_create (machineGlobalsBlock->p_media, "Helix.ini");
+                    printf ("\ninit.ini not found. Creating...");
+                //The 'init.ini' file is not found, so create a new file
+                fx_return = fx_file_create (machineGlobalsBlock->p_media, "init.ini");
                 if (fx_return != FX_SUCCESS)
                 {
 
@@ -172,15 +167,15 @@ void USB_entry(void)
                 else
                 {
                     if (DEBUGGER)
-                        printf ("\nHelix.ini created. Initiating INI save...");
+                        printf ("\ninit.ini created. Initiating INI save...");
                 }
                 // Open that file
-                fx_return = fx_file_open(machineGlobalsBlock->p_media, &ini_file, "Helix.ini",
+                fx_return = fx_file_open(machineGlobalsBlock->p_media, &ini_file, "init.ini",
                                          FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
                 if (fx_return != FX_SUCCESS)
                 {
                     if (DEBUGGER)
-                        printf ("\nCannot open Helix.ini.");
+                        printf ("\nCannot open init.ini.");
                 }
                 else
                 {
@@ -189,9 +184,9 @@ void USB_entry(void)
             }
             else
             {
-                ///Helix.ini is already present. Load INI settings
+                ///init.ini is already present. Load INI settings
                 if (DEBUGGER)
-                    printf ("\nHelix.ini present. Initiating INI load...");
+                    printf ("\ninit.ini present. Initiating INI load...");
                 loadINI ();
             }
 
@@ -228,12 +223,12 @@ void USB_entry(void)
                         tmpUSBOut[1] = 'M';
                         tmpUSBOut[2] = 'P';
 
-                        snprintf (tmpUSBOut + 3, 8, "%f", toolBlockA->tempRead);
+                        snprintf (tmpUSBOut + 3, 8, "Test");
                         status = _ux_device_class_cdc_acm_write (g_cdc, (UCHAR *) tmpUSBOut, 12, &actual_length);
                     }
                     else
                     {
-                        processReceivedMsg (machineGlobalsBlock->USBBufferB);
+//                        processReceivedMsg (machineGlobalsBlock->USBBufferB);
                     }
                 }
                 else
@@ -332,6 +327,86 @@ UINT usb_host_plug_event_notification(ULONG usb_event, UX_HOST_CLASS *host_class
         }
     }
     return UX_SUCCESS;
+}
+
+/// Saves all persistent machine information, including motor calibration settings
+void saveINI()
+{
+//    UINT fx_return;
+//    UINT tmpIndex;
+//    ULONG length_tmp;
+//
+//    tmpIndex = 0;
+//    length_tmp = sizeof(struct motorController);
+//    ///Go to INI file start
+//    fx_return = fx_file_seek (&ini_file, 0);
+//
+//    memcpy (local_buffer, motorBlockZ, length_tmp);
+//    memcpy ((local_buffer + length_tmp), motorBlockX, length_tmp);
+//    memcpy ((local_buffer + (2 * length_tmp)), motorBlockY, length_tmp);
+//    memcpy ((local_buffer + (3 * length_tmp)), toolBlockA->motorBlock, length_tmp);
+//
+//    printf ("\nWriting INI data...");
+//    // Write the file in blocks
+//    fx_return = fx_file_write (&ini_file, local_buffer, (4 * length_tmp));
+//    if (fx_return != FX_SUCCESS)
+//    {
+//        if (DEBUGGER)
+//            printf ("\nINI write fail.");
+//    }
+//    else
+//    {
+//        if (DEBUGGER)
+//            printf ("\nINI write success.");
+//        fx_return = fx_media_flush (machineGlobalsBlock->p_media);
+//    }
+//    if (DEBUGGER)
+//        printf ("\nINI save complete.");
+//
+/////Clear local buffer to prevent errors with other USB operations
+//    memset (machineGlobalsBlock->local_buffer, 0, (4 * length_tmp));
+//
+//    if (DEBUGGER)
+//        printf ("\nINI save complete.");
+}
+
+/// Saves all persistent machine information, including motor calibration settings
+void loadINI()
+{
+//    UINT fx_return;
+//    UINT tmpIndex;
+//    ULONG length_tmp;
+//    ULONG actual_length;
+//
+//    tmpIndex = 0;
+//    length_tmp = sizeof(struct motorController);
+//    ///Go to INI file start
+//    fx_return = fx_file_seek (&ini_file, 0);
+//
+//    if (DEBUGGER)
+//        printf ("\nLoading INI...");
+//    ///Attempt to read 500 bytes
+//    fx_return = fx_file_read (&ini_file, local_buffer, (4 * length_tmp), &actual_length);
+//    if (fx_return != FX_SUCCESS)
+//    {
+//        if (DEBUGGER)
+//            printf ("\nINI read fail.");
+//    }
+//    else
+//    {
+//        if (DEBUGGER)
+//            printf ("\nINI read success.");
+//    }
+//
+//    memcpy (motorBlockZ, local_buffer, length_tmp);
+//    memcpy (motorBlockX, (local_buffer + length_tmp), length_tmp);
+//    memcpy (motorBlockY, (local_buffer + (2 * length_tmp)), length_tmp);
+//    memcpy (toolBlockA->motorBlock, (local_buffer + (3 * length_tmp)), length_tmp);
+//
+//    if (DEBUGGER)
+//        printf ("\nINI data loaded.");
+/////Clear local buffer to prevent errors with other USB operations
+//    memset (machineGlobalsBlock->local_buffer, 0, (4 * length_tmp));
 }
 
 void ux_cdc_device0_instance_activate(VOID *cdc_instance)

@@ -513,6 +513,14 @@
         <property id="rtos.threadx.object.flags.symbol" value="g_udp_data_received"/>
       </object>
     </context>
+    <context id="rtos.threadx.thread.290852482">
+      <property id="_symbol" value="MainThread"/>
+      <property id="rtos.threadx.thread.name" value="MainThread"/>
+      <property id="rtos.threadx.thread.stack" value="1024"/>
+      <property id="rtos.threadx.thread.priority" value="1"/>
+      <property id="rtos.threadx.thread.autostart" value="rtos.threadx.thread.autostart.enabled"/>
+      <property id="rtos.threadx.thread.timeslice" value="1"/>
+    </context>
     <config id="config.el.ux_v2"/>
     <config id="config.el.ux_device">
       <property id="config.el.ux_device.composite" value="config.el.ux_device.composite.disable"/>
