@@ -1,5 +1,5 @@
 #include "USB.h"
-#define DEBUGGER 1
+#define DEBUGGER 0
 #define UDPMSGLENGTH 10
 UINT usb_host_plug_event_notification(ULONG usb_event, UX_HOST_CLASS *host_class, VOID *instance);
 void initGlobalsBlock();
