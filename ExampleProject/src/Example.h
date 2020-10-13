@@ -29,4 +29,4 @@ struct machineGlobals
     ///UDPRX is a flag which indicates if data has been received via UDP. Active HIGH.
     char UDPRX;
     char echoWaitStart;
-} *machineGlobalsBlock;s
+} *machineGlobalsBlock;
