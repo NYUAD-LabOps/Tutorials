@@ -18,7 +18,6 @@ static char *local_buffer;
 
 /* USB entry function */
 
-
 ///This example USB thread begins by creating a memory block pool. This memory block pool resides in a protected space, where it is protected from corruption by any RTOS
 /// operations. This memory pool is set up to store a character buffer and machine state information, including the state of the USB plug. Next, it waits until the USB Host device
 /// registers a USB plug has been connected. This initiates a callback function which registers the change in the memory block pool. Once the main thread registers this, it opens
@@ -43,132 +42,62 @@ void USB_entry(void)
     UINT fx_return;
     UINT status;
 
+    while (machineGlobalsBlock->globalsInit != 1)
+    {
+        tx_thread_sleep (500);
+    }
+
     ///Setup the byte pool for handling FileX operations.
     local_buffer = initUSBBuffer_Pool (UX_STORAGE_BUFFER_SIZE);
     machineGlobalsBlock->local_buffer = local_buffer;
+    if (DEBUGGER)
+        printf ("\nUSB Host buffer initialized.");
 
-    while (1)
+    while (machineGlobalsBlock->USBPlugIn != 1)
     {
+        tx_thread_sleep (500);
+    }
 
-        while (machineGlobalsBlock->globalsInit != 1)
+    if (DEBUGGER)
+        printf ("\nUSB Plug in detected.");
+
+    // Get the pointer to FileX Media Control Block for a USB flash device
+    p_media = g_fx_media0_ptr;
+    machineGlobalsBlock->p_media = p_media;
+
+    // Retrieve the volume name of the opened media from the Data sector
+    fx_return = fx_media_volume_get (machineGlobalsBlock->p_media, volume, FX_DIRECTORY_SECTOR);
+
+    if (fx_return == FX_SUCCESS)
+    {
+        // Set the default directory in the opened media, arbitrary name called "firstdir"
+        fx_directory_default_set (machineGlobalsBlock->p_media, "firstdir");
+
+        // Suspend this thread for 200 time-ticks
+        tx_thread_sleep (100);
+
+        // Try to open the file, 'init.ini'.
+        fx_return = fx_file_open(machineGlobalsBlock->p_media, &ini_file, "init.ini",
+                                 FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
+
+        if (fx_return != FX_SUCCESS)
         {
-            tx_thread_sleep (500);
-        }
-
-        while (machineGlobalsBlock->USBPlugIn == 0)
-        {
-            tx_thread_sleep (500);
-        }
-
-        // Get the pointer to FileX Media Control Block for a USB flash device
-        p_media = g_fx_media0_ptr;
-        machineGlobalsBlock->p_media = p_media;
-
-        // Retrieve the volume name of the opened media from the Data sector
-        fx_return = fx_media_volume_get (machineGlobalsBlock->p_media, volume, FX_DIRECTORY_SECTOR);
-
-        if (fx_return == FX_SUCCESS)
-        {
-            // Set the default directory in the opened media, arbitrary name called "firstdir"
-            fx_directory_default_set (machineGlobalsBlock->p_media, "firstdir");
-
-            // Suspend this thread for 200 time-ticks
-            tx_thread_sleep (100);
-
-            // Try to open the file, 'gcodeTutorial.txt'.
-            fx_return = fx_file_open(machineGlobalsBlock->p_media, &my_file, "gcodeTutorial.txt",
-                                     FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
+            if (DEBUGGER)
+                printf ("\ninit.ini not found. Creating...");
+            //The 'init.ini' file is not found, so create a new file
+            fx_return = fx_file_create (machineGlobalsBlock->p_media, "init.ini");
 
             if (fx_return != FX_SUCCESS)
             {
-                //The 'gcodeTutorial.txt' file is not found, so create a new file
-                fx_return = fx_file_create (machineGlobalsBlock->p_media, "gcodeTutorial.txt");
-                if (fx_return != FX_SUCCESS)
-                {
-                    // Blink the LED 1 to report an error
+                if (DEBUGGER)
+                    printf ("\nFailed to create init.ini.");
 
-                    break;
-                }
-                fx_return = fx_media_flush (machineGlobalsBlock->p_media);
-                // Open that file
-                fx_return = fx_file_open(machineGlobalsBlock->p_media, &my_file, "gcodeTutorial.txt",
-                                         FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
-                if (fx_return != FX_SUCCESS)
-                {
-                    if (DEBUGGER)
-                    {
-                        printf ("\nCould not open G-code buffer.");
-                    }
-                    break;
-                }
-                else
-                {
-                    if (DEBUGGER)
-                    {
-                        printf ("\nG-code buffer ready.");
-                    }
-                }
             }
             else
             {
                 if (DEBUGGER)
-                {
-                    printf ("\nG-code buffer already found - rebuilding...");
-                }
-                ///File already exists - rebuild it for a clean slate
-                fx_return = fx_file_close (&my_file);
-                fx_return = fx_file_delete (machineGlobalsBlock->p_media, "gcodeTutorial.txt");
-                fx_return = fx_media_flush (machineGlobalsBlock->p_media);
+                    printf ("\ninit.ini created.");
 
-                fx_return = fx_file_create (machineGlobalsBlock->p_media, "gcodeTutorial.txt");
-                fx_return = fx_media_flush (machineGlobalsBlock->p_media);
-                if (fx_return != FX_SUCCESS)
-                {
-                    if (DEBUGGER)
-                    {
-                        printf ("\nCould not create G-code buffer.");
-                    }
-
-                    break;
-                }
-                // Open that file
-                fx_return = fx_file_open(machineGlobalsBlock->p_media, &my_file, "gcodeTutorial.txt",
-                                         FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
-                if (fx_return != FX_SUCCESS)
-                {
-                    if (DEBUGGER)
-                    {
-                        printf ("\nCould not open G-code buffer.");
-                    }
-                    break;
-                }
-                else
-                {
-                    if (DEBUGGER)
-                        printf ("\nG-code buffer ready.");
-
-                }
-            }
-
-                        // Try to open the file, 'init.ini'.
-            fx_return = fx_file_open(machineGlobalsBlock->p_media, &ini_file, "init.ini",
-                                     FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
-
-            if (fx_return != FX_SUCCESS)
-            {
-                if (DEBUGGER)
-                    printf ("\ninit.ini not found. Creating...");
-                //The 'init.ini' file is not found, so create a new file
-                fx_return = fx_file_create (machineGlobalsBlock->p_media, "init.ini");
-                if (fx_return != FX_SUCCESS)
-                {
-
-                }
-                else
-                {
-                    if (DEBUGGER)
-                        printf ("\ninit.ini created. Initiating INI save...");
-                }
                 // Open that file
                 fx_return = fx_file_open(machineGlobalsBlock->p_media, &ini_file, "init.ini",
                                          FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
@@ -179,95 +108,93 @@ void USB_entry(void)
                 }
                 else
                 {
-                    saveINI ();
+                    if (DEBUGGER)
+                        printf ("\ninit.ini opened.");
                 }
+            }
+
+        }
+        else
+        {
+            ///init.ini is already present. Load INI settings
+            if (DEBUGGER)
+                printf ("\ninit.ini present. Initiating INI load...");
+        }
+
+        // Already open a file, then read the file in blocks
+        // Set a specified byte offset for reading
+//        fx_return = fx_file_seek (&my_file, 0);
+
+        machineGlobalsBlock->USBBufferOpen = 1;
+        if (DEBUGGER)
+            printf ("\nUSB buffer ready.");
+        if (DEBUGGER)
+            printf ("\nController ready.");
+
+        //Close already opened file
+        fx_return = fx_file_close (&my_file);
+
+        tx_thread_sleep (200);
+
+        /* flush the media */
+        fx_return = fx_media_flush (machineGlobalsBlock->p_media);
+
+        /* close the media */
+        fx_return = fx_media_close (machineGlobalsBlock->p_media);
+
+    }
+    else
+    {
+        if (DEBUGGER)
+            printf ("\nCould not retrieve media information.");
+    }
+
+    while (1)
+    {
+        memset (machineGlobalsBlock->USBBufferB, 0, 49);
+        status = _ux_device_class_cdc_acm_read (g_cdc, machineGlobalsBlock->USBBufferB, 49, &actual_length);
+        if (status == UX_SUCCESS)
+        {
+            if (machineGlobalsBlock->USBBufferB[0] == 'U' && machineGlobalsBlock->USBBufferB[1] == 'S'
+                    && machineGlobalsBlock->USBBufferB[2] == 'B')
+            {
+                status = _ux_device_class_cdc_acm_write (g_cdc, (UCHAR *) "USB", 4, &actual_length);
+            }
+            else if (machineGlobalsBlock->USBBufferB[0] == 'T' && machineGlobalsBlock->USBBufferB[1] == 'M'
+                    && machineGlobalsBlock->USBBufferB[2] == 'P')
+            {
+                float tempRead = 0.01;
+                char tmpUSBOut[12];
+                memset (tmpUSBOut, 0, 12);
+                tmpUSBOut[0] = 'T';
+                tmpUSBOut[1] = 'M';
+                tmpUSBOut[2] = 'P';
+
+                snprintf (tmpUSBOut + 3, 8, "%f", tempRead);
+                status = _ux_device_class_cdc_acm_write (g_cdc, (UCHAR *) tmpUSBOut, 12, &actual_length);
             }
             else
             {
-                ///init.ini is already present. Load INI settings
-                if (DEBUGGER)
-                    printf ("\ninit.ini present. Initiating INI load...");
-                loadINI ();
+                processReceivedMsg (machineGlobalsBlock->USBBufferB);
             }
-
-            // Already open a file, then read the file in blocks
-            // Set a specified byte offset for reading
-            fx_return = fx_file_seek (&my_file, 0);
-
-            machineGlobalsBlock->USBBufferOpen = 1;
-            if (DEBUGGER)
-                printf ("\nUSB buffer ready.");
-            if (DEBUGGER)
-                printf ("\nController ready.");
-
-            while (1)
-            {
-                memset (machineGlobalsBlock->USBBufferB, 0, 49);
-                status = _ux_device_class_cdc_acm_read (g_cdc, machineGlobalsBlock->USBBufferB, 49, &actual_length);
-                if (status == UX_SUCCESS)
-                {
-                    if (machineGlobalsBlock->USBBufferB[0] == 'U' && machineGlobalsBlock->USBBufferB[1] == 'S'
-                            && machineGlobalsBlock->USBBufferB[2] == 'B')
-                    {
-                        status = _ux_device_class_cdc_acm_write (g_cdc, (UCHAR *) "USB", 4, &actual_length);
-                    }
-                    else if (machineGlobalsBlock->USBBufferB[0] == 'T' && machineGlobalsBlock->USBBufferB[1] == 'M'
-                            && machineGlobalsBlock->USBBufferB[2] == 'P')
-                    {
-                        float tempRead = 0.01;
-                        char tmpUSBOut[12];
-                        memset (tmpUSBOut, 0, 12);
-                        tmpUSBOut[0] = 'T';
-                        tmpUSBOut[1] = 'M';
-                        tmpUSBOut[2] = 'P';
-
-                        snprintf (tmpUSBOut + 3, 8, "%f", tempRead);
-                        status = _ux_device_class_cdc_acm_write (g_cdc, (UCHAR *) tmpUSBOut, 12, &actual_length);
-                    }
-                    else
-                    {
-                        processReceivedMsg (machineGlobalsBlock->USBBufferB);
-                    }
-                }
-                else
-                {
-
-                }
-                tx_thread_sleep (1);
-            }
-
-            //Close already opened file
-            fx_return = fx_file_close (&my_file);
-
-            tx_thread_sleep (200);
-
-            /* flush the media */
-            fx_return = fx_media_flush (machineGlobalsBlock->p_media);
-
-            /* close the media */
-            fx_return = fx_media_close (machineGlobalsBlock->p_media);
-
-#ifdef SEMI_HOSTING
-            if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk)
-            {
-                /* Debugger is connected */
-                /* Call this before any calls to printf() */
-                printf ("Disconnect the device \n");
-            }
-#endif
-
         }
-
-        while (machineGlobalsBlock->USBPlugIn == 1)
+        else
         {
-            tx_thread_sleep (500);
+
         }
+        tx_thread_sleep (1);
     }
+
+    while (machineGlobalsBlock->USBPlugIn == 1)
+    {
+        tx_thread_sleep (500);
+    }
+
 }
 
 void processReceivedMsg(char *message_buffer)
 {
-   printf(message_buffer);
+    printf (message_buffer);
 }
 
 UINT usb_host_plug_event_notification(ULONG usb_event, UX_HOST_CLASS *host_class, VOID *instance)
@@ -291,21 +218,16 @@ UINT usb_host_plug_event_notification(ULONG usb_event, UX_HOST_CLASS *host_class
              application execution. In a more realistic scenarios
              a more robust and complex error handling solution should
              be provided. */
-#ifdef SEMI_HOSTING
+
             if (DEBUGGER)
-            {
-                if (CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk)
-                {
-                    /* Debugger is connected */
-                    /* Call this before any calls to printf() */
-                    printf ("Could not get the pointer to the media, error:%d\n", ux_return);
-                }
-            }
-#endif
+                printf ("\nCould not get the pointer to the media, error:%d\n", ux_return);
+
 //                   tx_thread_sleep(TX_WAIT_FOREVER);
         }
         else
         {
+            if (DEBUGGER)
+                printf ("\nGot USB plug media pointer.");
             //Check the usb_event type
             switch (usb_event)
             {
@@ -314,14 +236,14 @@ UINT usb_host_plug_event_notification(ULONG usb_event, UX_HOST_CLASS *host_class
                     tx_event_flags_set (&g_usb_plug_events, EVENT_USB_PLUG_IN, TX_OR);
 
                     ///Your code here
-//                    machineGlobalsBlock->USBPlugIn = 1;
+                    machineGlobalsBlock->USBPlugIn = 1;
                 break;
                 case EVENT_USB_PLUG_OUT:
                     // Notify the removal of a USB Mass Storage device.
                     tx_event_flags_set (&g_usb_plug_events, EVENT_USB_PLUG_OUT, TX_OR);
 
                     ///Your code here
-//                    machineGlobalsBlock->USBPlugIn = 0;
+                    machineGlobalsBlock->USBPlugIn = 0;
                 break;
                 default:
                     //ignore this unsupported event

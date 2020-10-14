@@ -9,12 +9,14 @@ TX_BYTE_POOL USB_Byte_PoolB;
 void MainThread_entry(void)
 {
     /* TODO: add your own code here */
-    initGlobalsBlock();
+    if (DEBUGGER)
+        initialise_monitor_handles ();
+
+    initGlobalsBlock ();
     machineGlobalsBlock->USBBufferB = initUSBBuffer_PoolB (512);
-    while (1)
-    {
-        tx_thread_sleep (1);
-    }
+
+
+    tx_thread_suspend (tx_thread_identify ());
 }
 
 void initGlobalsBlock()
@@ -29,7 +31,11 @@ void initGlobalsBlock()
     status = tx_block_allocate (&globals_pool, (VOID **) &memory_ptr, TX_NO_WAIT);
     machineGlobalsBlock = (struct machineGlobals *) memory_ptr;
 
+
+    machineGlobalsBlock->USBPlugIn = 0;
+
     machineGlobalsBlock->globalsInit = 1;
+
 
 }
 
