@@ -75,14 +75,14 @@ void USB_entry(void)
             // Suspend this thread for 200 time-ticks
             tx_thread_sleep (100);
 
-            // Try to open the file, 'gcodeHelix.txt'.
-            fx_return = fx_file_open(machineGlobalsBlock->p_media, &my_file, "gcodeHelix.txt",
+            // Try to open the file, 'gcodeTutorial.txt'.
+            fx_return = fx_file_open(machineGlobalsBlock->p_media, &my_file, "gcodeTutorial.txt",
                                      FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
 
             if (fx_return != FX_SUCCESS)
             {
-                //The 'gcodeHelix.txt' file is not found, so create a new file
-                fx_return = fx_file_create (machineGlobalsBlock->p_media, "gcodeHelix.txt");
+                //The 'gcodeTutorial.txt' file is not found, so create a new file
+                fx_return = fx_file_create (machineGlobalsBlock->p_media, "gcodeTutorial.txt");
                 if (fx_return != FX_SUCCESS)
                 {
                     // Blink the LED 1 to report an error
@@ -91,7 +91,7 @@ void USB_entry(void)
                 }
                 fx_return = fx_media_flush (machineGlobalsBlock->p_media);
                 // Open that file
-                fx_return = fx_file_open(machineGlobalsBlock->p_media, &my_file, "gcodeHelix.txt",
+                fx_return = fx_file_open(machineGlobalsBlock->p_media, &my_file, "gcodeTutorial.txt",
                                          FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
                 if (fx_return != FX_SUCCESS)
                 {
@@ -117,10 +117,10 @@ void USB_entry(void)
                 }
                 ///File already exists - rebuild it for a clean slate
                 fx_return = fx_file_close (&my_file);
-                fx_return = fx_file_delete (machineGlobalsBlock->p_media, "gcodeHelix.txt");
+                fx_return = fx_file_delete (machineGlobalsBlock->p_media, "gcodeTutorial.txt");
                 fx_return = fx_media_flush (machineGlobalsBlock->p_media);
 
-                fx_return = fx_file_create (machineGlobalsBlock->p_media, "gcodeHelix.txt");
+                fx_return = fx_file_create (machineGlobalsBlock->p_media, "gcodeTutorial.txt");
                 fx_return = fx_media_flush (machineGlobalsBlock->p_media);
                 if (fx_return != FX_SUCCESS)
                 {
@@ -132,7 +132,7 @@ void USB_entry(void)
                     break;
                 }
                 // Open that file
-                fx_return = fx_file_open(machineGlobalsBlock->p_media, &my_file, "gcodeHelix.txt",
+                fx_return = fx_file_open(machineGlobalsBlock->p_media, &my_file, "gcodeTutorial.txt",
                                          FX_OPEN_FOR_READ | FX_OPEN_FOR_WRITE);
                 if (fx_return != FX_SUCCESS)
                 {
