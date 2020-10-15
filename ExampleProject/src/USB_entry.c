@@ -41,6 +41,8 @@ void USB_entry(void)
     UINT tx_return;
     UINT fx_return;
     UINT status;
+    UINT tmpIndex;
+    ULONG length_tmp;
 
     while (machineGlobalsBlock->globalsInit != 1)
     {
@@ -53,27 +55,28 @@ void USB_entry(void)
     if (DEBUGGER)
         printf ("\nUSB Host buffer initialized.");
 
+    ///Wait until a USB plug is inserted.
     while (machineGlobalsBlock->USBPlugIn != 1)
     {
         tx_thread_sleep (500);
     }
 
     if (DEBUGGER)
-        printf ("\nUSB Plug in detected.");
+        printf ("\nUSB Plug detected.");
 
-    // Get the pointer to FileX Media Control Block for a USB flash device
-    p_media = g_fx_media0_ptr;
-    machineGlobalsBlock->p_media = p_media;
+    // Get the pointer to FileX Media Control Block for a USB flash device.
+//    p_media = ;
+    machineGlobalsBlock->p_media = g_fx_media0_ptr;
 
     // Retrieve the volume name of the opened media from the Data sector
     fx_return = fx_media_volume_get (machineGlobalsBlock->p_media, volume, FX_DIRECTORY_SECTOR);
 
     if (fx_return == FX_SUCCESS)
     {
-        // Set the default directory in the opened media, arbitrary name called "firstdir"
+        // Set the default directory in the opened media, arbitrary name called "firstdir".
         fx_directory_default_set (machineGlobalsBlock->p_media, "firstdir");
 
-        // Suspend this thread for 200 time-ticks
+        // Suspend this thread for 100 time-ticks.
         tx_thread_sleep (100);
 
         // Try to open the file, 'init.ini'.
@@ -84,7 +87,8 @@ void USB_entry(void)
         {
             if (DEBUGGER)
                 printf ("\ninit.ini not found. Creating...");
-            //The 'init.ini' file is not found, so create a new file
+
+            //The 'init.ini' file was not found, so create a new file
             fx_return = fx_file_create (machineGlobalsBlock->p_media, "init.ini");
 
             if (fx_return != FX_SUCCESS)
@@ -110,15 +114,162 @@ void USB_entry(void)
                 {
                     if (DEBUGGER)
                         printf ("\ninit.ini opened.");
+
+                    if (DEBUGGER)
+                        printf ("\nThe INI file is empty. Saving a 1...");
+
+                    local_buffer[0] = '1';
+
+                    tmpIndex = 0;
+
+                    ///Go to INI file start
+                    fx_return = fx_file_seek (&ini_file, 0);
+
+                    printf ("\nWriting INI data...");
+
+                    // Write the file in blocks
+                    fx_return = fx_file_write (&ini_file, local_buffer, 1);
+
+                    if (fx_return != FX_SUCCESS)
+                    {
+                        if (DEBUGGER)
+                            printf ("\nINI write failed.");
+                    }
+                    else
+                    {
+                        if (DEBUGGER)
+                            printf ("\nINI write successful. Flushing media...");
+
+                        fx_return = fx_media_flush (machineGlobalsBlock->p_media);
+                        if (fx_return != FX_SUCCESS)
+                        {
+                            if (DEBUGGER)
+                                printf ("\nMedia Flush failed.");
+                        }
+                        else
+                        {
+                            if (DEBUGGER)
+                                printf ("\nMedia Flush successful.");
+                        }
+                    }
                 }
+
             }
 
         }
         else
         {
-            ///init.ini is already present. Load INI settings
+            ///init.ini is already present. Load INI data
             if (DEBUGGER)
-                printf ("\ninit.ini present. Initiating INI load...");
+                printf ("\nINI present. Reading...");
+
+            tmpIndex = 0;
+
+            ///Go to INI file start
+            fx_return = fx_file_seek (&ini_file, 0);
+
+            ///Read the first byte of the file and place it in local_buffer.
+            fx_return = fx_file_read (&ini_file, local_buffer, 1, &actual_length);
+
+            if (fx_return != FX_SUCCESS)
+            {
+                if (DEBUGGER)
+                    printf ("\nINI read fail.");
+            }
+            else
+            {
+                if (DEBUGGER)
+                    printf ("\nINI read success.");
+            }
+
+            if (DEBUGGER)
+                printf ("\nINI data loaded.");
+
+            if (actual_length > 0)
+            {
+                if (DEBUGGER)
+                    printf ("\nIncrementing and saving retrieved byte.");
+
+                local_buffer[0]++;
+
+                tmpIndex = 0;
+
+                ///Go to INI file start
+                fx_return = fx_file_seek (&ini_file, 0);
+
+                printf ("\nWriting INI data...");
+
+                // Write the file in blocks
+                fx_return = fx_file_write (&ini_file, local_buffer, 1);
+
+                if (fx_return != FX_SUCCESS)
+                {
+                    if (DEBUGGER)
+                        printf ("\nINI write failed.");
+                }
+                else
+                {
+                    if (DEBUGGER)
+                        printf ("\nINI write successful. Flushing media...");
+
+                    fx_return = fx_media_flush (machineGlobalsBlock->p_media);
+                    if (fx_return != FX_SUCCESS)
+                    {
+                        if (DEBUGGER)
+                            printf ("\nMedia Flush failed.");
+                    }
+                    else
+                    {
+                        if (DEBUGGER)
+                            printf ("\nMedia Flush successful.");
+                    }
+                }
+
+            }
+            else
+            {
+                if (DEBUGGER)
+                    printf ("\nThe INI file is empty. Saving a 1...");
+
+                local_buffer[0] = '1';
+
+                tmpIndex = 0;
+
+                ///Go to INI file start
+                fx_return = fx_file_seek (&ini_file, 0);
+
+                printf ("\nWriting INI data...");
+
+                // Write the file in blocks
+                fx_return = fx_file_write (&ini_file, local_buffer, 1);
+
+                if (fx_return != FX_SUCCESS)
+                {
+                    if (DEBUGGER)
+                        printf ("\nINI write failed.");
+                }
+                else
+                {
+                    if (DEBUGGER)
+                        printf ("\nINI write successful. Flushing media...");
+
+                    fx_return = fx_media_flush (machineGlobalsBlock->p_media);
+                    if (fx_return != FX_SUCCESS)
+                    {
+                        if (DEBUGGER)
+                            printf ("\nMedia Flush failed.");
+                    }
+                    else
+                    {
+                        if (DEBUGGER)
+                            printf ("\nMedia Flush successful.");
+                    }
+                }
+            }
+
+            ///Clear local_buffer
+            memset (machineGlobalsBlock->local_buffer, 0, 1);
+
         }
 
         // Already open a file, then read the file in blocks
@@ -204,7 +355,7 @@ UINT usb_host_plug_event_notification(ULONG usb_event, UX_HOST_CLASS *host_class
 
     UX_HOST_CLASS_STORAGE_MEDIA *p_ux_host_class_storage_media;
 
-    // Check if host_class is for Mass Storage class.
+// Check if host_class is for Mass Storage class.
     if (UX_SUCCESS
             == _ux_utility_memory_compare (_ux_system_host_class_storage_name, host_class,
                                            _ux_utility_string_length_get (_ux_system_host_class_storage_name)))
