@@ -192,6 +192,10 @@
       <description>General Purpose Timer: Provides=[Timer ,GPT]</description>
       <originalPack>Renesas.Synergy.1.7.5.pack</originalPack>
     </component>
+    <component apiversion="" class="Express Logic" condition="" group="all" subgroup="nxd_src" variant="" vendor="Renesas" version="1.7.5">
+      <description>Express Logic NetX Duo: Provides=[NetX Duo] , Requires=[ThreadX ,NetX Driver]</description>
+      <originalPack>Renesas.Synergy.1.7.5.pack</originalPack>
+    </component>
   </synergyComponentSelection>
   <synergyIcuConfiguration/>
   <synergyMessagingConfiguration/>
@@ -240,13 +244,6 @@
     <module id="module.el.fx_common.732768893">
       <property id="module.el.fx_common.init_function" value="fx_common_init0"/>
       <property id="module.el.fx_common.init" value="module.el.fx_common.init.enable"/>
-    </module>
-    <module id="module.el.ux_device_class_cdc_acm_v2.968797002">
-      <property id="module.el.ux_device_class_cdc_acm_v2.name" value="g_ux_device_class_cdc_acm0"/>
-      <property id="module.el.ux_device_class_cdc_acm_v2.pfunc_activate" value="ux_cdc_device0_instance_activate"/>
-      <property id="module.el.ux_device_class_cdc_acm_v2.pfunc_deactivate" value="ux_cdc_device0_instance_deactivate"/>
-      <property id="module.el.ux_device_class_cdc_acm_v2.init_function" value="ux_device_class_cdc_acm_init0"/>
-      <property id="module.el.ux_device_class_cdc_acm_v2.init" value="module.el.ux_device_class_cdc_acm_v2.init.enable"/>
     </module>
     <module id="module.el.ux_device.468409168">
       <property id="module.el.ux_device.idVendor" value="0x045B"/>
@@ -392,7 +389,7 @@
       <property id="module.el.nx.ip.igmp" value="module.el.nx.ip.igmp.enable"/>
       <property id="module.el.nx.ip.fragmentation" value="module.el.nx.ip.fragmentation.disable"/>
       <property id="module.el.nx.ip.init_function" value="ip_init0"/>
-      <property id="module.el.nx.ip.init" value="module.el.nx.ip.init.disable"/>
+      <property id="module.el.nx.ip.init" value="module.el.nx.ip.init.enable"/>
       <property id="module.el.nx.ip.link_change_callback" value="NULL"/>
     </module>
     <module id="module.el.nxd_common.1052292193">
@@ -429,6 +426,14 @@
       <property id="module.driver.timer.p_callback" value="getTemp_callback"/>
       <property id="module.driver.timer.irq_ipl" value="board.icu.common.irq.priority6"/>
     </module>
+    <module id="module.el.ux_device_class_cdc_acm_v2.183327920">
+      <property id="module.el.ux_device_class_cdc_acm_v2.name" value="g_ux_device_class_cdc_acm1"/>
+      <property id="module.el.ux_device_class_cdc_acm_v2.pfunc_activate" value="ux_cdc_device1_instance_activate"/>
+      <property id="module.el.ux_device_class_cdc_acm_v2.pfunc_deactivate" value="ux_cdc_device1_instance_deactivate"/>
+      <property id="module.el.ux_device_class_cdc_acm_v2.init_function" value="ux_device_class_cdc_acm_init1"/>
+      <property id="module.el.ux_device_class_cdc_acm_v2.init" value="module.el.ux_device_class_cdc_acm_v2.init.enable"/>
+    </module>
+    <module id="module.el.nxd_src.56110865"/>
     <context id="_hal.0">
       <stack module="module.driver.cgc_on_cgc.0"/>
       <stack module="module.driver.ioport_on_ioport.0"/>
@@ -438,8 +443,8 @@
       <stack module="module.driver.timer_on_gpt.392727502"/>
     </context>
     <context id="rtos.threadx.thread.1430369894">
-      <property id="_symbol" value="USB"/>
-      <property id="rtos.threadx.thread.name" value="USB"/>
+      <property id="_symbol" value="USBHost"/>
+      <property id="rtos.threadx.thread.name" value="USBHost"/>
       <property id="rtos.threadx.thread.stack" value="4096"/>
       <property id="rtos.threadx.thread.priority" value="6"/>
       <property id="rtos.threadx.thread.autostart" value="rtos.threadx.thread.autostart.enabled"/>
@@ -463,40 +468,30 @@
           </stack>
         </stack>
       </stack>
-      <stack module="module.el.ux_device_class_cdc_acm_v2.968797002">
-        <stack module="module.el.ux_device_class_cdc_acm_src.1556444135" requires="module.el.ux_device_class_cdc_acm_v2.requires.ux_device_class_cdc_acm_src"/>
-        <stack module="module.el.ux_device.468409168" requires="module.el.ux_device_class_cdc_acm_v2.requires.ux_device">
-          <stack module="module.framework.sf_el_ux_dcd_fs.568847540" requires="module.el.ux_device.requires.sf_el_ux_dcd">
-            <stack module="module.driver.transfer_on_dmac.450226594" requires="module.framework.sf_el_ux_dcd_fs.requires.transfer_tx"/>
-            <stack module="module.driver.transfer_on_dmac.1914540827" requires="module.framework.sf_el_ux_dcd_fs.requires.transfer_rx"/>
-          </stack>
-          <stack module="module.el.ux_v2.1719060344" requires="module.el.ux_device.requires.ux_v2">
-            <stack module="module.el.ux_src.1673039305" requires="module.el.ux_v2.requires.ux_src"/>
-          </stack>
-        </stack>
-        <stack module="module.el.ux.interface_descriptor_cdcacm.cdc_acm.627181593" requires="module.el.ux_device_class_cdc_acm_v2.requires.interface_descriptor_cdcacm"/>
-      </stack>
-      <object id="rtos.threadx.object.semaphore.2141294322">
-        <property id="rtos.threadx.object.semaphore.name" value="New Semaphore"/>
-        <property id="rtos.threadx.object.semaphore.symbol" value="g_cdc_activate_semaphore"/>
-        <property id="rtos.threadx.object.semaphore.count" value="0"/>
-      </object>
       <object id="rtos.threadx.object.flags.323828460">
         <property id="rtos.threadx.object.flags.name" value="USB Plug Event Flags"/>
         <property id="rtos.threadx.object.flags.symbol" value="g_usb_plug_events"/>
       </object>
     </context>
     <context id="rtos.threadx.thread.1850144455">
-      <property id="_symbol" value="Ethernet"/>
-      <property id="rtos.threadx.thread.name" value="Ethernet"/>
+      <property id="_symbol" value="EthernetPrimary"/>
+      <property id="rtos.threadx.thread.name" value="EthernetPrimary"/>
       <property id="rtos.threadx.thread.stack" value="1024"/>
       <property id="rtos.threadx.thread.priority" value="2"/>
       <property id="rtos.threadx.thread.autostart" value="rtos.threadx.thread.autostart.enabled"/>
       <property id="rtos.threadx.thread.timeslice" value="1"/>
       <stack module="module.el.nxd.ip.2043612693">
-        <stack module="module.el.nxd_common.1052292193" requires="module.el.nx.ip.requires.nxd_common"/>
+        <stack module="module.el.nxd_common.1052292193" requires="module.el.nx.ip.requires.nxd_common">
+          <stack module="module.el.nxd_src.56110865" requires="module.el.nx.ip.requires.nxd_src">
+            <stack module="module.framework.tx_src.919340895" requires="module.el.nxd_src.requires.tx_src"/>
+          </stack>
+        </stack>
         <stack module="module.el.nxd.packet_pool.770221576" requires="module.el.nx.ip.requires.nxd.packet_pool">
-          <stack module="module.el.nxd_common.1052292193" requires="module.el.nx.packet_pool.requires.nxd_common"/>
+          <stack module="module.el.nxd_common.1052292193" requires="module.el.nx.packet_pool.requires.nxd_common">
+            <stack module="module.el.nxd_src.56110865" requires="module.el.nx.ip.requires.nxd_src">
+              <stack module="module.framework.tx_src.919340895" requires="module.el.nxd_src.requires.tx_src"/>
+            </stack>
+          </stack>
         </stack>
         <stack module="module.framework.sf_el_nx.863500222" requires="module.el.nx.ip.requires.sf_el_nx"/>
       </stack>
@@ -521,6 +516,132 @@
       <property id="rtos.threadx.thread.autostart" value="rtos.threadx.thread.autostart.enabled"/>
       <property id="rtos.threadx.thread.timeslice" value="1"/>
     </context>
+    <context id="rtos.threadx.thread.1304017552">
+      <property id="_symbol" value="USBDevice"/>
+      <property id="rtos.threadx.thread.name" value="USBDevice"/>
+      <property id="rtos.threadx.thread.stack" value="1024"/>
+      <property id="rtos.threadx.thread.priority" value="1"/>
+      <property id="rtos.threadx.thread.autostart" value="rtos.threadx.thread.autostart.enabled"/>
+      <property id="rtos.threadx.thread.timeslice" value="1"/>
+      <stack module="module.el.ux_device_class_cdc_acm_v2.183327920">
+        <stack module="module.el.ux_device_class_cdc_acm_src.1556444135" requires="module.el.ux_device_class_cdc_acm_v2.requires.ux_device_class_cdc_acm_src"/>
+        <stack module="module.el.ux_device.468409168" requires="module.el.ux_device_class_cdc_acm_v2.requires.ux_device">
+          <stack module="module.framework.sf_el_ux_dcd_fs.568847540" requires="module.el.ux_device.requires.sf_el_ux_dcd">
+            <stack module="module.driver.transfer_on_dmac.450226594" requires="module.framework.sf_el_ux_dcd_fs.requires.transfer_tx"/>
+            <stack module="module.driver.transfer_on_dmac.1914540827" requires="module.framework.sf_el_ux_dcd_fs.requires.transfer_rx"/>
+          </stack>
+          <stack module="module.el.ux_v2.1719060344" requires="module.el.ux_device.requires.ux_v2">
+            <stack module="module.el.ux_src.1673039305" requires="module.el.ux_v2.requires.ux_src"/>
+          </stack>
+        </stack>
+        <stack module="module.el.ux.interface_descriptor_cdcacm.cdc_acm.627181593" requires="module.el.ux_device_class_cdc_acm_v2.requires.interface_descriptor_cdcacm"/>
+      </stack>
+      <object id="rtos.threadx.object.semaphore.265904417">
+        <property id="rtos.threadx.object.semaphore.name" value="g_cdc_activate_semaphore"/>
+        <property id="rtos.threadx.object.semaphore.symbol" value="g_cdc_activate_semaphore"/>
+        <property id="rtos.threadx.object.semaphore.count" value="0"/>
+      </object>
+    </context>
+    <context id="rtos.threadx.thread.1978809646">
+      <property id="_symbol" value="EthernetSecondary"/>
+      <property id="rtos.threadx.thread.name" value="EthernetSecondary"/>
+      <property id="rtos.threadx.thread.stack" value="1024"/>
+      <property id="rtos.threadx.thread.priority" value="1"/>
+      <property id="rtos.threadx.thread.autostart" value="rtos.threadx.thread.autostart.enabled"/>
+      <property id="rtos.threadx.thread.timeslice" value="1"/>
+    </context>
+    <config id="config.el.nxd_src">
+      <property id="config.el.nxd_src.error_checking" value="config.el.nxd_src.error_checking.enabled"/>
+      <property id="config.el.nxd_src.ip_static_routing" value="config.el.nxd_src.ip_static_routing.disabled"/>
+      <property id="config.el.nxd_src.physical_header" value=""/>
+      <property id="config.el.nxd_src.physical_trailer" value=""/>
+      <property id="config.el.nxd_src.arp_defend_by_reply" value="config.el.nxd_src.arp_defend_by_reply.disabled"/>
+      <property id="config.el.nxd_src.arp_mac_change_notification" value="config.el.nxd_src.arp_mac_change_notification.disabled"/>
+      <property id="config.el.nxd_src.arp_expiration_rate" value=""/>
+      <property id="config.el.nxd_src.arp_update_rate" value=""/>
+      <property id="config.el.nxd_src.tcp_ack_timer_rate" value=""/>
+      <property id="config.el.nxd_src.tcp_fast_timer_rate" value=""/>
+      <property id="config.el.nxd_src.tcp_transmit_timer_rate" value=""/>
+      <property id="config.el.nxd_src.tcp_keepalive_initial" value=""/>
+      <property id="config.el.nxd_src.tcp_keepalive_retry" value=""/>
+      <property id="config.el.nxd_src.arp_maximum_retries" value=""/>
+      <property id="config.el.nxd_src.arp_max_queue_depth" value=""/>
+      <property id="config.el.nxd_src.arp_auto_arp_entry" value="config.el.nxd_src.arp_auto_arp_entry.enabled"/>
+      <property id="config.el.nxd_src.max_multicast_groups" value=""/>
+      <property id="config.el.nxd_src.max_listen_requests" value=""/>
+      <property id="config.el.nxd_src.tcp_keepalive" value="config.el.nxd_src.tcp_keepalive.disabled"/>
+      <property id="config.el.nxd_src.tcp_window_scaling" value="config.el.nxd_src.tcp_window_scaling.disabled"/>
+      <property id="config.el.nxd_src.tcp_immediate_ack" value="config.el.nxd_src.tcp_immediate_ack.disabled"/>
+      <property id="config.el.nxd_src.tcp_ack_every_n_packets" value=""/>
+      <property id="config.el.nxd_src.tcp_maximum_retries" value=""/>
+      <property id="config.el.nxd_src.tcp_maximum_tx_queue" value=""/>
+      <property id="config.el.nxd_src.tcp_retry_shift" value=""/>
+      <property id="config.el.nxd_src.tcp_keepalive_retries" value=""/>
+      <property id="config.el.nxd_src.driver_deferred_processing" value="config.el.nxd_src.driver_deferred_processing.disabled"/>
+      <property id="config.el.nxd_src.loopback_interface" value="config.el.nxd_src.loopback_interface.enabled"/>
+      <property id="config.el.nxd_src.max_physical_interfaces" value=""/>
+      <property id="config.el.nxd_src.fragmentation" value="config.el.nxd_src.fragmentation.enabled"/>
+      <property id="config.el.nxd_src.ip_rx_checksum" value="config.el.nxd_src.ip_rx_checksum.enabled"/>
+      <property id="config.el.nxd_src.ip_tx_checksum" value="config.el.nxd_src.ip_tx_checksum.enabled"/>
+      <property id="config.el.nxd_src.tcp_rx_checksum" value="config.el.nxd_src.tcp_rx_checksum.enabled"/>
+      <property id="config.el.nxd_src.tcp_tx_checksum" value="config.el.nxd_src.tcp_tx_checksum.enabled"/>
+      <property id="config.el.nxd_src.udp_rx_checksum" value="config.el.nxd_src.udp_rx_checksum.enabled"/>
+      <property id="config.el.nxd_src.udp_tx_checksum" value="config.el.nxd_src.udp_tx_checksum.enabled"/>
+      <property id="config.el.nxd_src.reset_disconnect" value="config.el.nxd_src.reset_disconnect.enabled"/>
+      <property id="config.el.nxd_src.rx_size_checking" value="config.el.nxd_src.rx_size_checking.enabled"/>
+      <property id="config.el.nxd_src.arp_info" value="config.el.nxd_src.arp_info.enabled"/>
+      <property id="config.el.nxd_src.ip_info" value="config.el.nxd_src.ip_info.enabled"/>
+      <property id="config.el.nxd_src.icmp_info" value="config.el.nxd_src.icmp_info.enabled"/>
+      <property id="config.el.nxd_src.igmpv2" value="config.el.nxd_src.igmpv2.enabled"/>
+      <property id="config.el.nxd_src.igmp_info" value="config.el.nxd_src.igmp_info.enabled"/>
+      <property id="config.el.nxd_src.packet_info" value="config.el.nxd_src.packet_info.enabled"/>
+      <property id="config.el.nxd_src.rarp_info" value="config.el.nxd_src.rarp_info.enabled"/>
+      <property id="config.el.nxd_src.tcp_info" value="config.el.nxd_src.tcp_info.enabled"/>
+      <property id="config.el.nxd_src.udp_info" value="config.el.nxd_src.udp_info.enabled"/>
+      <property id="config.el.nxd_src.extended_notify_support" value="config.el.nxd_src.extended_notify_support.disabled"/>
+      <property id="config.el.nxd_src.natd" value="config.el.nxd_src.natd.disabled"/>
+      <property id="config.el.nxd_src.packet_header_pad_size" value=""/>
+      <property id="config.el.nxd_src.tcp_mss_minimum" value=""/>
+      <property id="config.el.nxd_src.source_address_check" value="config.el.nxd_src.source_address_check.disabled"/>
+      <property id="config.el.nxd_src.arp_defend_interval" value=""/>
+      <property id="config.el.nxd_src.tcp_max_out_of_order_packets" value=""/>
+      <property id="config.el.nxd_src.feature_nx_ipv6" value="config.el.nxd_src.feature_nx_ipv6.enabled"/>
+      <property id="config.el.nxd_src.ipv6_address_change_notify" value="config.el.nxd_src.ipv6_address_change_notify.disabled"/>
+      <property id="config.el.nxd_src.ipv6_path_mtu_discovery" value="config.el.nxd_src.ipv6_path_mtu_discovery.disabled"/>
+      <property id="config.el.nxd_src.path_mtu_increase_wait_interval" value=""/>
+      <property id="config.el.nxd_src.ipv6_default_router_table_size" value=""/>
+      <property id="config.el.nxd_src.ipv6_destination_table_size" value=""/>
+      <property id="config.el.nxd_src.ip_max_reassembly_time" value=""/>
+      <property id="config.el.nxd_src.ipv4_max_reassembly_time" value=""/>
+      <property id="config.el.nxd_src.ipv6_max_reassembly_time" value=""/>
+      <property id="config.el.nxd_src.ipv6_multicast" value="config.el.nxd_src.ipv6_multicast.disabled"/>
+      <property id="config.el.nxd_src.ipv6_prefix_list_table_size" value=""/>
+      <property id="config.el.nxd_src.ipv6_stateless_autoconfig_control" value="config.el.nxd_src.ipv6_stateless_autoconfig_control.disabled"/>
+      <property id="config.el.nxd_src.max_ipv6_addresses" value=""/>
+      <property id="config.el.nxd_src.delay_first_probe_time" value=""/>
+      <property id="config.el.nxd_src.ipv6_dad" value="config.el.nxd_src.ipv6_dad.enabled"/>
+      <property id="config.el.nxd_src.ipv6_dad_transmits" value=""/>
+      <property id="config.el.nxd_src.ipv6_purge_unused_cache_entries" value="config.el.nxd_src.ipv6_purge_unused_cache_entries.disabled"/>
+      <property id="config.el.nxd_src.ipv6_neighbor_cache_size" value=""/>
+      <property id="config.el.nxd_src.max_multicast_solicit" value=""/>
+      <property id="config.el.nxd_src.max_unicast_solicit" value=""/>
+      <property id="config.el.nxd_src.nd_max_queue_depth" value=""/>
+      <property id="config.el.nxd_src.reachable_time" value=""/>
+      <property id="config.el.nxd_src.retrans_timer" value=""/>
+      <property id="config.el.nxd_src.icmpv6_error_message" value="config.el.nxd_src.icmpv6_error_message.enabled"/>
+      <property id="config.el.nxd_src.icmpv6_redirect_process" value="config.el.nxd_src.icmpv6_redirect_process.enabled"/>
+      <property id="config.el.nxd_src.icmpv6_router_advertisement_process" value="config.el.nxd_src.icmpv6_router_advertisement_process.enabled"/>
+      <property id="config.el.nxd_src.icmpv6_router_solicitation" value="config.el.nxd_src.icmpv6_router_solicitation.enabled"/>
+      <property id="config.el.nxd_src.icmpv6_max_rtr_solicitations" value=""/>
+      <property id="config.el.nxd_src.icmpv6_rtr_solicitation_interval" value=""/>
+      <property id="config.el.nxd_src.icmpv4_rx_checksum" value="config.el.nxd_src.icmpv4_rx_checksum.enabled"/>
+      <property id="config.el.nxd_src.icmpv6_rx_checksum" value="config.el.nxd_src.icmpv6_rx_checksum.enabled"/>
+      <property id="config.el.nxd_src.icmp_rx_checksum" value="config.el.nxd_src.icmp_rx_checksum.enabled"/>
+      <property id="config.el.nxd_src.icmpv4_tx_checksum" value="config.el.nxd_src.icmpv4_tx_checksum.enabled"/>
+      <property id="config.el.nxd_src.icmpv6_tx_checksum" value="config.el.nxd_src.icmpv6_tx_checksum.enabled"/>
+      <property id="config.el.nxd_src.icmp_tx_checksum" value="config.el.nxd_src.icmp_tx_checksum.enabled"/>
+      <property id="config.el.nxd_src.packet_alignment" value=""/>
+    </config>
     <config id="config.el.ux_v2"/>
     <config id="config.el.ux_device">
       <property id="config.el.ux_device.composite" value="config.el.ux_device.composite.disable"/>

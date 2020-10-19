@@ -13,8 +13,6 @@ void MainThread_entry(void)
         initialise_monitor_handles ();
 
     initGlobalsBlock ();
-    machineGlobalsBlock->USBBufferB = initUSBBuffer_PoolB (512);
-
 
     tx_thread_suspend (tx_thread_identify ());
 }

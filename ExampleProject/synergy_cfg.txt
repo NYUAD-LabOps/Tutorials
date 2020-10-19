@@ -334,7 +334,6 @@ Synergy Configuration
   Module "USBX Host Configuration"
   Module "USBX on ux"
   Module "FileX Common on fx"
-  Module "USBX Device Class CDC-ACM"
   Module "USBX Device Configuration"
     Composite Device: Disable
     
@@ -432,6 +431,99 @@ Synergy Configuration
   Module "Timer Driver on r_gpt"
     Parameter Checking: Default (BSP)
     
+  Module "USBX Device Class CDC-ACM"
+  Module "NetX Duo Source"
+    Error Checking: Enabled (default)
+    IP Static Routing: Disabled (default)
+    Physical Header: 
+    Physical Trailer: 
+    ARP Defend By Reply: Disabled (default)
+    ARP Mac Change Notification: Disabled (default)
+    ARP Expiration Rate: 
+    ARP Update Rate: 
+    TCP ACK Timer Rate: 
+    TCP Fast Timer Rate: 
+    TCP Transmit Timer Rate: 
+    TCP Keepalive Initial: 
+    TCP Keepalive Retry Interval: 
+    ARP Maximum Retries: 
+    ARP Maximum Queue Depth: 
+    ARP Auto ARP Entry: Enabled (default)
+    Maximum Multicast Groups: 
+    Maximum Listen Requests: 
+    TCP Keepalive: Disabled (default)
+    TCP Window Scaling: Disabled (default)
+    TCP Immediate ACK: Disabled (default)
+    TCP ACK Every N Packets: 
+    TCP Maximum Retries: 
+    TCP Maximum TX Queue: 
+    TCP Retry Shift: 
+    TCP Keepalive Retries: 
+    Driver Deferred Processing: Disabled (default)
+    Loopback Interface: Enabled (default)
+    Maximum Physical Interfaces: 
+    Fragmentation support: Enabled (default)
+    IP RX Checksum: Enabled (default)
+    IP TX Checksum: Enabled (default)
+    TCP RX Checksum: Enabled (default)
+    TCP TX Checksum: Enabled (default)
+    Udp RX Checksum: Enabled (default)
+    Udp TX Checksum: Enabled (default)
+    Reset Disconnect: Enabled (default)
+    RX Size Checking: Enabled (default)
+    ARP Info: Enabled (default)
+    IP Info: Enabled (default)
+    ICMP Info: Enabled (default)
+    IGMPv2: Enabled (default)
+    IGMP Info: Enabled (default)
+    Packet Info: Enabled (default)
+    RARP Info: Enabled (default)
+    TCP Info: Enabled (default)
+    UDP Info: Enabled (default)
+    Extended Notify Support: Disabled (default)
+    NAT: Disabled (default)
+    Packet Header Pad Size: 
+    TCP MSS Minimum: 
+    Source Address Check: Disabled (default)
+    ARP Defend Interval: 
+    TCP Maximum Out Of Order Packets: 
+    NetX Duo IPV6 Support: Enabled (default)
+    Notify when the IPv6 address is changed: Disabled (default)
+    Allow discover maximum MTU in the path: Disabled (default)
+    Wait before resetting target's path MTU in destination table (seconds): 
+    IPv6 routing table entry limit: 
+    IPv6 destination table entry limit: 
+    Maximum time allowed to reassemble IP fragment: 
+    Maximum time allowed to reassemble IPv4 fragment: 
+    Maximum time allowed to reassemble IPv6 fragment: 
+    IPv6 multicast join/leave function support: Disabled (default)
+    Size of the prefix table for router advertisements: 
+    stateless address auto-configuration support: Disabled (default)
+    IPv6 address pool entry limit: 
+    Delay before the first stale cache entry solicitation (seconds): 
+    Duplicate Address Detection support: Enabled (default)
+    Neighbor Solicitation message count before interface address marked valid: 
+    Retain older cache table entries till timeout option: Disabled (default)
+    IPv6 Neighbor Cache table entry limit.: 
+    Neighbor Solicitation message count for IPv6 Neighbor Discovery protocol: 
+    Neighbor Solicitation message count to determine neighbor’s reachability: 
+    Maximum entries in ND cache queue: 
+    Duration for address to be 'reachable' with no packets received from it (seconds): 
+    Delay between solicitation packets (milliseconds): 
+    ICMPv6 error message in response to invalid packet support: Enabled (default)
+    ICMPv6 redirect packet processing support: Enabled (default)
+    IPv6 router advertisement packet processing support: Enabled (default)
+    Periodic IPv6 router solicitation messages support: Enabled (default)
+    Maximum host router solicitations till no response is received: 
+    Interval between two router solicitation messages: 
+    Checksum computation support on received ICMPv4 packets: Enabled (default)
+    Checksum computation support on received ICMPv6 packets: Enabled (default)
+    Checksum computation support on received ICMP packets: Enabled (default)
+    Checksum computation support on transmitted ICMPv4 packets: Enabled (default)
+    Checksum computation support on transmitted ICMPv6 packets: Enabled (default)
+    Checksum computation support on transmitted ICMP packets: Enabled (default)
+    Packet Alignment: 
+    
   HAL
     Instance "g_cgc CGC Driver on r_cgc"
       Name [Fixed]: g_cgc
@@ -465,9 +557,9 @@ Synergy Configuration
       Callback: getTemp_callback
       Overflow Interrupt Priority: Priority 6
       
-  Thread "USB"
-    Symbol: USB
-    Name: USB
+  Thread "USBHost"
+    Symbol: USBHost
+    Name: USBHost
     Stack size (bytes): 4096
     Priority: 6
     Auto start: Enabled
@@ -551,11 +643,102 @@ Synergy Configuration
           Instance "ThreadX Source"
             Show linkage warning: Disabled
             
-    Instance "g_ux_device_class_cdc_acm0 USBX Device Class CDC-ACM"
-      Name: g_ux_device_class_cdc_acm0
-      USBX CDC-ACM instance_activate Function Callback: ux_cdc_device0_instance_activate
-      USBX CDC-ACM instance_deactivate Function Callback: ux_cdc_device0_instance_deactivate
-      Name of generated initialization function: ux_device_class_cdc_acm_init0
+    Object "g_usb_plug_events Event Flags"
+      Name: USB Plug Event Flags
+      Symbol: g_usb_plug_events
+      
+  Thread "EthernetPrimary"
+    Symbol: EthernetPrimary
+    Name: EthernetPrimary
+    Stack size (bytes): 1024
+    Priority: 2
+    Auto start: Enabled
+    Time slicing interval (ticks): 1
+    
+    Instance "g_ip0 NetX Duo IP Instance"
+      Name: g_ip0
+      IPv4 Address: 192.168.10.181
+      Subnet Mask: 255.255.255.0
+      Default Gateway Address: 0.0.0.0
+      IPv6 Global Address: 2001:0:0:0:0:0:0:1
+      IPv6 Link Local Address (All zeros means use MAC address): 0:0:0:0:0:0:0:0
+      IP Helper Thread Stack Size (bytes): 2048
+      IP Helper Thread Priority: 0
+      ARP: Enable
+      ARP cache storage units: Bytes
+          ARP cache size (in storage units): 520
+      Reverse ARP: Disable
+      TCP: Enable
+      UDP: Enable
+      ICMP: Enable
+      IGMP: Enable
+      IP fragmentation: Disable
+      Name of generated initialization function: ip_init0
+      Auto Initialization: Enable
+      Link status change callback: NULL
+      
+      Instance "NetX Duo Common on nxd"
+        Name of generated initialization function: nx_common_init0
+        Auto Initialization: Enable
+        
+        Instance "NetX Duo Source"
+          Instance "ThreadX Source"
+            Show linkage warning: Disabled
+            
+      Instance "g_packet_pool0 NetX Duo Packet Pool Instance"
+        Name: g_packet_pool0
+        Packet Size (bytes): 1568
+        Number of Packets in Pool: 16
+        Name of generated initialization function: packet_pool_init0
+        Auto Initialization: Enable
+        
+        Instance "NetX Duo Common on nxd"
+          Name of generated initialization function: nx_common_init0
+          Auto Initialization: Enable
+          
+          Instance "NetX Duo Source"
+            Instance "ThreadX Source"
+              Show linkage warning: Disabled
+              
+      Instance "g_sf_el_nx NetX Port ETHER on sf_el_nx"
+        Name: g_sf_el_nx
+        Channel: 1
+        MAC address change callback: NULL
+        Unknown packet receive Callback: NULL
+        
+    Object "g_udp_ready Event Flags"
+      Name: UDP Ready
+      Symbol: g_udp_ready
+      
+    Object "g_udp_echo_received Event Flags"
+      Name: UDP Echo Received
+      Symbol: g_udp_echo_received
+      
+    Object "g_udp_data_received Event Flags"
+      Name: UDP Data Received
+      Symbol: g_udp_data_received
+      
+  Thread "MainThread"
+    Symbol: MainThread
+    Name: MainThread
+    Stack size (bytes): 1024
+    Priority: 1
+    Auto start: Enabled
+    Time slicing interval (ticks): 1
+    
+  Thread "USBDevice"
+    Symbol: USBDevice
+    Name: USBDevice
+    Stack size (bytes): 1024
+    Priority: 1
+    Auto start: Enabled
+    Time slicing interval (ticks): 1
+    
+    Instance "g_ux_device_class_cdc_acm1 USBX Device Class CDC-ACM"
+      Name: g_ux_device_class_cdc_acm1
+      USBX CDC-ACM instance_activate Function Callback: ux_cdc_device1_instance_activate
+      USBX CDC-ACM instance_deactivate Function Callback: ux_cdc_device1_instance_deactivate
+      Name of generated initialization function: ux_device_class_cdc_acm_init1
       Auto Initialization: Enable
       
       Instance "USBX Device Class CDC-ACM Source"
@@ -646,80 +829,13 @@ Synergy Configuration
         Index of String Descriptor Describing Data Class interface (Interface Descriptor:iInterface).: 0x00
         
     Object "g_cdc_activate_semaphore Semaphore"
-      Name: New Semaphore
+      Name: g_cdc_activate_semaphore
       Symbol: g_cdc_activate_semaphore
       Initial count: 0
       
-    Object "g_usb_plug_events Event Flags"
-      Name: USB Plug Event Flags
-      Symbol: g_usb_plug_events
-      
-  Thread "Ethernet"
-    Symbol: Ethernet
-    Name: Ethernet
-    Stack size (bytes): 1024
-    Priority: 2
-    Auto start: Enabled
-    Time slicing interval (ticks): 1
-    
-    Instance "g_ip0 NetX Duo IP Instance"
-      Name: g_ip0
-      IPv4 Address: 192.168.10.181
-      Subnet Mask: 255.255.255.0
-      Default Gateway Address: 0.0.0.0
-      IPv6 Global Address: 2001:0:0:0:0:0:0:1
-      IPv6 Link Local Address (All zeros means use MAC address): 0:0:0:0:0:0:0:0
-      IP Helper Thread Stack Size (bytes): 2048
-      IP Helper Thread Priority: 0
-      ARP: Enable
-      ARP cache storage units: Bytes
-          ARP cache size (in storage units): 520
-      Reverse ARP: Disable
-      TCP: Enable
-      UDP: Enable
-      ICMP: Enable
-      IGMP: Enable
-      IP fragmentation: Disable
-      Name of generated initialization function: ip_init0
-      Auto Initialization: Disable
-      Link status change callback: NULL
-      
-      Instance "NetX Duo Common on nxd"
-        Name of generated initialization function: nx_common_init0
-        Auto Initialization: Enable
-        
-      Instance "g_packet_pool0 NetX Duo Packet Pool Instance"
-        Name: g_packet_pool0
-        Packet Size (bytes): 1568
-        Number of Packets in Pool: 16
-        Name of generated initialization function: packet_pool_init0
-        Auto Initialization: Enable
-        
-        Instance "NetX Duo Common on nxd"
-          Name of generated initialization function: nx_common_init0
-          Auto Initialization: Enable
-          
-      Instance "g_sf_el_nx NetX Port ETHER on sf_el_nx"
-        Name: g_sf_el_nx
-        Channel: 1
-        MAC address change callback: NULL
-        Unknown packet receive Callback: NULL
-        
-    Object "g_udp_ready Event Flags"
-      Name: UDP Ready
-      Symbol: g_udp_ready
-      
-    Object "g_udp_echo_received Event Flags"
-      Name: UDP Echo Received
-      Symbol: g_udp_echo_received
-      
-    Object "g_udp_data_received Event Flags"
-      Name: UDP Data Received
-      Symbol: g_udp_data_received
-      
-  Thread "MainThread"
-    Symbol: MainThread
-    Name: MainThread
+  Thread "EthernetSecondary"
+    Symbol: EthernetSecondary
+    Name: EthernetSecondary
     Stack size (bytes): 1024
     Priority: 1
     Auto start: Enabled

@@ -1,7 +1,7 @@
 /* generated configuration header file - do not edit */
 #ifndef NX_USER_H_
 #define NX_USER_H_
-#if (SYNERGY_NOT_DEFINED)
+#if (1)
 #include "nxd_src_user.h"
 #endif
 #if (SYNERGY_NOT_DEFINED)

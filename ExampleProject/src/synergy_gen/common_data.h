@@ -3,13 +3,13 @@
 #define COMMON_DATA_H_
 #include <stdint.h>
 #include "bsp_api.h"
+#include "r_dmac.h"
+#include "r_transfer_api.h"
 #include "nx_api.h"
 #include "sf_el_nx_cfg.h"
 #include "../src/framework/sf_el_nx/nx_renesas_synergy.h"
 #include "nx_api.h"
 
-#include "r_dmac.h"
-#include "r_transfer_api.h"
 #include "fx_api.h"
 #include "ux_api.h"
 #include "ux_host_class_storage.h"
@@ -25,21 +25,6 @@
 extern "C"
 {
 #endif
-#ifndef NULL
-void NULL(nx_mac_address_t *p_mac_config);
-#endif
-#ifndef NULL
-void NULL(NX_PACKET *packet_ptr, USHORT packet_type);
-#endif
-VOID nx_ether_driver_eth1(NX_IP_DRIVER *driver_req_ptr);
-extern VOID (*g_sf_el_nx)(NX_IP_DRIVER *driver_req_ptr);
-void nx_common_init0(void);
-extern NX_PACKET_POOL g_packet_pool0;
-void g_packet_pool0_err_callback(void *p_instance, void *p_data);
-void packet_pool_init0(void);
-extern NX_IP g_ip0;
-void g_ip0_err_callback(void *p_instance, void *p_data);
-void ip_init0(void);
 
 /* Transfer on DMAC Instance. */
 extern const transfer_instance_t g_transfer3;
@@ -55,6 +40,14 @@ void NULL(transfer_callback_args_t *p_args);
 #include "ux_dcd_synergy.h"
 #include "sf_el_ux_dcd_fs_cfg.h"
 void g_sf_el_ux_dcd_fs_0_err_callback(void *p_instance, void *p_data);
+#ifndef NULL
+void NULL(nx_mac_address_t *p_mac_config);
+#endif
+#ifndef NULL
+void NULL(NX_PACKET *packet_ptr, USHORT packet_type);
+#endif
+VOID nx_ether_driver_eth1(NX_IP_DRIVER *driver_req_ptr);
+extern VOID (*g_sf_el_nx)(NX_IP_DRIVER *driver_req_ptr);
 #include "ux_api.h"
 
 /* USBX Host Stack initialization error callback function. User can override the function if needed. */
@@ -82,16 +75,16 @@ void ux_common_init0(void);
 void ux_device_err_callback(void *p_instance, void *p_data);
 void ux_device_init0(void);
 void ux_device_remove_compiler_padding(unsigned char *p_device_framework, UINT length);
-/* Header section starts for g_ux_device_class_cdc_acm0 */
+/* Header section starts for g_ux_device_class_cdc_acm1 */
 #include "ux_api.h"
 #include "ux_device_class_cdc_acm.h"
 /* USBX CDC-ACM Instance Activate User Callback Function */
-extern VOID ux_cdc_device0_instance_activate(VOID *cdc_instance);
+extern VOID ux_cdc_device1_instance_activate(VOID *cdc_instance);
 /* USBX CDC-ACM Instance Deactivate User Callback Function */
-extern VOID ux_cdc_device0_instance_deactivate(VOID *cdc_instance);
-/* Header section ends for g_ux_device_class_cdc_acm0 */
-void ux_device_class_cdc_acm_init0(void);
-void g_ux_device_class_cdc_acm0_ux_device_open_init(void);
+extern VOID ux_cdc_device1_instance_deactivate(VOID *cdc_instance);
+/* Header section ends for g_ux_device_class_cdc_acm1 */
+void ux_device_class_cdc_acm_init1(void);
+void g_ux_device_class_cdc_acm1_ux_device_open_init(void);
 /* Transfer on DMAC Instance. */
 extern const transfer_instance_t g_transfer1;
 #ifndef NULL
@@ -112,6 +105,13 @@ void ux_host_init0(void);
 
 /* Pointer to a USBX Host Mass Storage Class Instance */
 extern UX_HOST_CLASS_STORAGE *g_ux_host_class_storage0;
+void nx_common_init0(void);
+extern NX_PACKET_POOL g_packet_pool0;
+void g_packet_pool0_err_callback(void *p_instance, void *p_data);
+void packet_pool_init0(void);
+extern NX_IP g_ip0;
+void g_ip0_err_callback(void *p_instance, void *p_data);
+void ip_init0(void);
 void fx_common_init0(void);
 /* A pointer to FileX Media Control Block for a USB flash device */
 extern FX_MEDIA *g_fx_media0_ptr;
