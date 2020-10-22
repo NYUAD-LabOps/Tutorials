@@ -13,18 +13,12 @@ void ethernetPrimarySend(char *data, unsigned int length, NX_UDP_SOCKET *udp_sck
 /* Ethernet entry function */
 void EthernetPrimary_entry(void)
 {
-    int i;
     UINT status;
     ULONG event;
     ULONG link_status;
-    /* Create all sockets and bind them to their respective ports */
-    /* Wait for the IP stack and network hardware
-     * to get initialized.
-     */
-//    ///Should be replaced with a proper wait flag.
-//    tx_thread_sleep (50);
+
 //    ip_init0 ();
-//    tx_thread_sleep (50);
+
     while (machineGlobalsBlock->globalsInit != 1)
         tx_thread_sleep (1);
 
