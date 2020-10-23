@@ -7,7 +7,7 @@
 static NX_UDP_SOCKET g_udp_sckPrimary;
 
 static void g_udp_sckPrimary_receive_cb(NX_UDP_SOCKET *);
-void ethernetPrimarySend(char *data, unsigned int length, NX_UDP_SOCKET *udp_sck, ULONG ip_address, UINT port,
+void ethernetPrimarySend(unsigned int length, NX_UDP_SOCKET *udp_sck, ULONG ip_address, UINT port,
         TX_EVENT_FLAGS_GROUP *udp_echo_received);
 
 /* Ethernet entry function */
@@ -29,42 +29,39 @@ void EthernetPrimary_entry(void)
         printf ("\nIP initialization complete. IP:%s", IPADDSTRING);
     }
 
-
     if (DEBUGGER)
-        {
-            printf ("\nCreating and binding Primary socket...");
-        }
-
+    {
+        printf ("\nCreating and binding Primary socket...");
+    }
 
     status = nx_udp_socket_create(&g_ip0, &machineGlobalsBlock->g_udp_sckPrimary, "UDP Socket", NX_IP_NORMAL,
                                   NX_DONT_FRAGMENT, NX_IP_TIME_TO_LIVE, 512);
     if (DEBUGGER)
-      {
-          if (NX_SUCCESS != status)
-          {
-              printf ("\nPrimary socket creation failed.");
-          }
-          else
-          {
-              printf ("\nPrimary socket creation successful.");
-          }
-      }
-
+    {
+        if (NX_SUCCESS != status)
+        {
+            printf ("\nPrimary socket creation failed.");
+        }
+        else
+        {
+            printf ("\nPrimary socket creation successful.");
+        }
+    }
 
     status = nx_udp_socket_bind (&machineGlobalsBlock->g_udp_sckPrimary, PRIMARY_PORT,
     NX_NO_WAIT);
 
     if (DEBUGGER)
-       {
-           if (NX_SUCCESS != status)
-           {
-               printf ("\nPrimary socket binding failed.");
-           }
-           else
-           {
-               printf ("\nPrimary socket binding successful.");
-           }
-       }
+    {
+        if (NX_SUCCESS != status)
+        {
+            printf ("\nPrimary socket binding failed.");
+        }
+        else
+        {
+            printf ("\nPrimary socket binding successful.");
+        }
+    }
 
     status = nx_udp_socket_receive_notify (&machineGlobalsBlock->g_udp_sckPrimary, g_udp_sckPrimary_receive_cb);
 
@@ -84,7 +81,7 @@ void EthernetPrimary_entry(void)
     if (DEBUGGER)
     {
         printf ("\nEthernet Primary initialization complete.");
-        printf("\nStarting example send loop...");
+        printf ("\nStarting example send loop...");
     }
 
     ///Clear the event flags
@@ -100,10 +97,11 @@ void EthernetPrimary_entry(void)
     {
 
         snprintf (machineGlobalsBlock->primarySendBuff, UDPMSGLENGTH, "Count:%d", sendCount);
-        printf("Primary sending \"%s\"...", machineGlobalsBlock->primarySendBuff);
+        printf ("Primary sending \"%s\"...", machineGlobalsBlock->primarySendBuff);
 
-        ethernetPrimarySend (machineGlobalsBlock->primarySendBuff, UDPMSGLENGTH, &machineGlobalsBlock->g_udp_sckPrimary, LOOPBACKIP, SECONDARY_PORT,
-                             &g_udp_echo_received);
+        ethernetPrimarySend (UDPMSGLENGTH, &machineGlobalsBlock->g_udp_sckPrimary,
+        LOOPBACKIP,
+                             SECONDARY_PORT, &g_udp_echo_received);
 
         ///Increment the counter and clear the buffer.
         sendCount++;
@@ -112,52 +110,35 @@ void EthernetPrimary_entry(void)
     }
 }
 
-void ethernetPrimarySend(char *data, unsigned int length, NX_UDP_SOCKET *udp_sck, ULONG ip_address, UINT port,
+void ethernetPrimarySend(unsigned int length, NX_UDP_SOCKET *udp_sck, ULONG ip_address, UINT port,
         TX_EVENT_FLAGS_GROUP *udp_echo_received)
 {
     UINT status;
     ULONG tmp = 0;
-//    char echoACK = 0;
-//    ioport_level_t level;
+
     NX_PACKET *my_packet;
     do
     {
         status = nx_packet_allocate (&g_packet_pool0, &my_packet, NX_UDP_PACKET, NX_WAIT_FOREVER);
         /* Check for error.  */
-        nx_packet_data_append (my_packet, data, length, &g_packet_pool0, NX_WAIT_FOREVER);
-
-//            if (DEBUG)
-//            {
-//                printf ("\nSending:%s...", machineGlobalsBlock->UDPBuffer);
-//            }
+        nx_packet_data_append (my_packet, machineGlobalsBlock->primarySendBuff, length, &g_packet_pool0,
+                               NX_WAIT_FOREVER);
 
         status = nx_udp_socket_send(udp_sck, my_packet, ip_address, port);
 
         if (NX_SUCCESS == status)
         {
-//                if (DEBUG)
-//                {
-//                    printf ("\nSend success.");
-//                }
         }
         else
         {
-//                if (DEBUG)
-//                {
-//                    printf ("\nSend fail.");
-//                }
             nx_packet_release(my_packet);
         }
 
-        //        machineGlobalsBlock->echoWaitStart = 1;
         status = tx_event_flags_get (udp_echo_received, 1, TX_AND_CLEAR, &tmp, 300);
     }
     while (tmp == 0);
-//        if (DEBUG)
-//        {
-//            printf ("\nSend complete.");
-//        }
-//        memset (machineGlobalsBlock->UDPBuffer, 0, UDPMSGLENGTH);
+
+    memset (machineGlobalsBlock->primarySendBuff, 0, UDPMSGLENGTH);
 }
 
 void processUDPRx(NX_PACKET *p_packet)
@@ -178,14 +159,9 @@ void processUDPRx(NX_PACKET *p_packet)
 
 static void g_udp_sckPrimary_receive_cb(NX_UDP_SOCKET *p_sck)
 {
-    ULONG ip;
-    UINT client_port;
-    UINT status;
     NX_PACKET *p_packet = NULL;
-    ULONG *length;
-    ULONG tmp;
-    char buff[50];
     /* Receive data here */
+
     nx_udp_socket_receive (p_sck, &p_packet, NX_NO_WAIT);
 ///No echo from the Primary
 //    nx_udp_source_extract (p_packet, &ip, &client_port);
