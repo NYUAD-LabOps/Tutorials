@@ -157,6 +157,7 @@ void processUDPRx(NX_PACKET *p_packet)
     }
 }
 
+
 static void g_udp_sckPrimary_receive_cb(NX_UDP_SOCKET *p_sck)
 {
     NX_PACKET *p_packet = NULL;
